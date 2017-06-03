@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using RawRabbit;
+using RawRabbit.vNext;
+using warsztaty.webapi.Framework;
 
-namespace devwarsztatydotnetcore
+namespace warsztaty.webapi
 {
     public class Startup
     {
@@ -29,6 +28,7 @@ namespace devwarsztatydotnetcore
         {
             // Add framework services.
             services.AddMvc();
+            ConfigureRabbitMq(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -38,6 +38,19 @@ namespace devwarsztatydotnetcore
             loggerFactory.AddDebug();
 
             app.UseMvc();
+        }
+
+        public void ConfigureRabbitMq(IServiceCollection services)
+        {
+            var options = new RabbitMqOptions();
+            var section = Configuration.GetSection("rabbitmq");
+            section.Bind(options);
+
+            services.Configure<RabbitMqOptions>(section);
+
+            var client = BusClientFactory.CreateDefault(options);
+            services.AddSingleton<IBusClient>(client);
+
         }
     }
 }
