@@ -11,7 +11,7 @@
             Reason = reason;
         }
 
-        public CreateRecordFailed()
+        protected CreateRecordFailed()
         {
         }
     }

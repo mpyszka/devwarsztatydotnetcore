@@ -4,7 +4,7 @@
     {
         public string Key { get; }
 
-        public RecordCreated()
+        protected RecordCreated()
         {
         }
 
