@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RawRabbit;
 using warsztaty.messages.Commands;
+using warsztaty.webapi.Storage;
 
 namespace warsztaty.webapi.Controllers
 {
@@ -9,10 +10,12 @@ namespace warsztaty.webapi.Controllers
     public class RecordsController : Controller
     {
         private readonly IBusClient _busClient;
+        private readonly IStorage _storage;
 
-        public RecordsController(IBusClient busClient)
+        public RecordsController(IBusClient busClient, IStorage storage)
         {
             _busClient = busClient;
+            _storage = storage;
         }
 
         [HttpPost]
@@ -20,6 +23,12 @@ namespace warsztaty.webapi.Controllers
         {
             await _busClient.PublishAsync(command);
             return Accepted();
+        }
+
+        [HttpGet]
+        public IActionResult Get()
+        {
+            return Json(_storage.GetAll());
         }
     }
 }
